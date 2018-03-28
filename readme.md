@@ -22,3 +22,15 @@
 ## Run http server
 
     http-server . -c-1 -o
+
+
+## TODO
+- Config.Controlls - prehodit klic a value - nutna zmena/redukce interface
+- Rozdelit Config.level na 3 vrstvy background, bedny a playera - vrstvy se budou skladat dohromady v Service.level
+
+
+## After Future
+- Travis CI
+- Unit tests 
+- Git hook - unit tests
+- vytvorit cli pro 'compile ts' a 'run server' 
