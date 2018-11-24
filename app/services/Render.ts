@@ -7,9 +7,7 @@ namespace Services {
         constructor(
             private game: Phaser.Game,
             private gridConfiguration: string[]
-        ) {
-            // nothing to do
-        }
+        ) {}
 
         public render(gridDefinition: number[][]): void {
 

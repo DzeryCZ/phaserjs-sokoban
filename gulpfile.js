@@ -1,7 +1,12 @@
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
+var connect = require('gulp-connect');
+ 
+gulp.task('webserver', function() {
+  connect.server();
+});
 
-gulp.task('default', function () {
+gulp.task('build', function () {
     return gulp.src('app/**/*.ts')
         .pipe(ts({
             noImplicitAny: true,
@@ -11,6 +16,7 @@ gulp.task('default', function () {
         .pipe(gulp.dest('build'));
 });
 
-gulp.task('watch', ['default'], function() {
-    gulp.watch('app/**/*.ts', ['default']);
+gulp.task('watch', ['build', 'webserver'], function() {
+    gulp.watch('app/**/*.ts', ['build']);
 });
+
