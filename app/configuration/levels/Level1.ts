@@ -1,15 +1,15 @@
 namespace Configuration.Levels.Level1 {
 
     export const Grid: number[][] = [
-        [0, 1, 0, 0, 0, 0],
-        [0, 1, 0, 2, 0, 1],
-        [0, 0, 1, 0, 0, 1],
-        [2, 0, 1, 0, 2, 1],
-        [0, 0, 0, 0, 0, 0],
-        [3, 3, 3, 0, 0, 0]
+        [Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty],
+        [Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.box, Configuration.Role.empty, Configuration.Role.wall],
+        [Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.wall],
+        [Configuration.Role.box, Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.box, Configuration.Role.wall],
+        [Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty],
+        [Configuration.Role.destination, Configuration.Role.destination, Configuration.Role.destination, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty]
     ]
 
-    export const Player: Interface.Configuration.Player = {
+    export const Player: Interface.Configuration.Position = {
         'x': 0,
         'y': 0
     }

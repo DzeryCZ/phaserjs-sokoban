@@ -37,6 +37,16 @@ var Configuration;
 })(Configuration || (Configuration = {}));
 var Configuration;
 (function (Configuration) {
+    Configuration.Role = {
+        'empty': 0,
+        'wall': 1,
+        'box': 2,
+        'destination': 3,
+        'player': 4
+    };
+})(Configuration || (Configuration = {}));
+var Configuration;
+(function (Configuration) {
     Configuration.Sprites = [
         'floor',
         'wall',
@@ -55,22 +65,16 @@ var Services;
             this.initializeKeys(Configuration.Controlls);
         }
         Controlls.prototype.initializeKeys = function (controllsConfig) {
-            this.controlls[0] = this.game.input.keyboard.addKey(controllsConfig['moveUp']);
-            this.controlls[0].onUp.add(Services.Controlls.prototype.keyPress, this);
-            this.controlls[1] = this.game.input.keyboard.addKey(controllsConfig['down']);
-            this.controlls[1].onUp.add(Services.Controlls.prototype.keyPress, this);
-            this.controlls[2] = this.game.input.keyboard.addKey(controllsConfig['left']);
-            this.controlls[2].onUp.add(Services.Controlls.prototype.keyPress, this);
-            this.controlls[3] = this.game.input.keyboard.addKey(controllsConfig['right']);
-            this.controlls[3].onUp.add(Services.Controlls.prototype.keyPress, this);
             // TODO - zmenit interface, z ojektu klaves, na list - kazda kavesa by mohla mit vlastni callback
-            //for (let key in controllsConfig) {
-            //    this.controlls[key] = this.game.input.keyboard.addKey(controllsConfig[key]);
-            //    this.controlls[key].onUp.add(Services.Controlls.prototype.keyPress, this);
-            //}
+            var index = 0;
+            for (var command in controllsConfig) {
+                this.controlls[index] = this.game.input.keyboard.addKey(controllsConfig[command]);
+                this.controlls[index].onUp.add(Services.Controlls.prototype.keyPress, this, 1, command);
+                index++;
+            }
         };
-        Controlls.prototype.keyPress = function (e) {
-            this.level.move('moveRight');
+        Controlls.prototype.keyPress = function (e, command) {
+            this.level.move(command);
         };
         return Controlls;
     }());
@@ -89,37 +93,60 @@ var Services;
         Level.prototype.init = function (grid, player) {
             this.grid = grid;
             this.player = player;
-            this.update();
+            this.update([0, 0], this.player, Configuration.Role.player);
         };
         Level.prototype.move = function (action) {
-            console.log(action);
-            // todo defensive programing    
-            this['moveRight']();
+            eval("this." + action + "()");
         };
         Level.prototype.moveUp = function () {
-            this.player.y--;
-            this.update();
+            this.update([-1, 0], this.player, Configuration.Role.player);
         };
         Level.prototype.moveDown = function () {
-            this.player.y++;
-            this.update();
+            this.update([1, 0], this.player, Configuration.Role.player);
+            // this.player.y = this.player.y + 1;
         };
         Level.prototype.moveLeft = function () {
-            this.player.x--;
-            this.update();
+            this.update([0, -1], this.player, Configuration.Role.player);
         };
         Level.prototype.moveRight = function () {
-            this.player.x++;
-            this.update();
-        };
-        Level.prototype.update = function () {
-            var finalGrid = JSON.parse(JSON.stringify(this.grid));
-            // todo - implement collision method, return updated grid (with or without changes)
-            finalGrid[this.player.y][this.player.x] = 4;
-            this.render.render(finalGrid);
+            this.update([0, 1], this.player, Configuration.Role.player);
         };
         /**
-         * @todo Nove to Service.Sprint
+         * @todo change vector to object instead of using array indexes
+         * @param vector
+         */
+        Level.prototype.update = function (vector, position, item) {
+            var oldPosition = JSON.parse(JSON.stringify(position)); // @todo Heper function
+            position.y = position.y + vector[0];
+            position.x = position.x + vector[1];
+            if (position.y < 0 || position.y > 5 || position.x < 0 || position.x > 5) {
+                position.y = position.y - vector[0];
+                position.x = position.x - vector[1];
+                return false;
+            }
+            switch (this.grid[position.y][position.x]) {
+                case Configuration.Role.wall:
+                    position.y = position.y - vector[0];
+                    position.x = position.x - vector[1];
+                    return false;
+                case Configuration.Role.box:
+                    var boxPosition = JSON.parse(JSON.stringify(position)); // @todo Heper function
+                    if (!this.update(vector, boxPosition, Configuration.Role.box)) {
+                        position.y = position.y - vector[0];
+                        position.x = position.x - vector[1];
+                    }
+                    console.log('box');
+                    break;
+            }
+            // let finalGrid = JSON.parse(JSON.stringify(this.grid));
+            // todo - implement collision method, return updated grid (with or without change, Configuration.Role.players)
+            this.grid[oldPosition.y][oldPosition.x] = Configuration.Role.empty; // @todo update with original tile
+            this.grid[position.y][position.x] = item;
+            this.render.render(this.grid);
+            return true;
+        };
+        /**
+         * @todo Move to Service.Sprint
          * @param assets
          */
         Level.prototype.loadMultiple = function (assets) {
@@ -128,7 +155,7 @@ var Services;
             }
         };
         /**
-         * @todo Nove to Service.Sprint
+         * @todo Move to Service.Sprint
          * @param assetName
          */
         Level.prototype.loadOne = function (assetName) {
@@ -170,12 +197,12 @@ var Configuration;
         var Level1;
         (function (Level1) {
             Level1.Grid = [
-                [0, 1, 0, 0, 0, 0],
-                [0, 1, 0, 2, 0, 1],
-                [0, 0, 1, 0, 0, 1],
-                [2, 0, 1, 0, 2, 1],
-                [0, 0, 0, 0, 0, 0],
-                [3, 3, 3, 0, 0, 0]
+                [Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty],
+                [Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.box, Configuration.Role.empty, Configuration.Role.wall],
+                [Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.wall],
+                [Configuration.Role.box, Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.box, Configuration.Role.wall],
+                [Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty],
+                [Configuration.Role.destination, Configuration.Role.destination, Configuration.Role.destination, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty]
             ];
             Level1.Player = {
                 'x': 0,

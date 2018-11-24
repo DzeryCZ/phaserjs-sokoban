@@ -1,6 +1,6 @@
 namespace Interface.Configuration {
 
-    export interface Player {
+    export interface Position {
         'x': number,
         'y': number
     }

@@ -8,33 +8,17 @@ namespace Services {
         }
 
         private initializeKeys(controllsConfig: Interface.Configuration.Controlls): void {
-
-            this.controlls[0] = this.game.input.keyboard.addKey(controllsConfig['moveUp']);
-            this.controlls[0].onUp.add(Services.Controlls.prototype.keyPress, this);
-
-            this.controlls[1] = this.game.input.keyboard.addKey(controllsConfig['down']);
-            this.controlls[1].onUp.add(Services.Controlls.prototype.keyPress, this);
-
-            this.controlls[2] = this.game.input.keyboard.addKey(controllsConfig['left']);
-            this.controlls[2].onUp.add(Services.Controlls.prototype.keyPress, this);
-
-            this.controlls[3] = this.game.input.keyboard.addKey(controllsConfig['right']);
-            this.controlls[3].onUp.add(Services.Controlls.prototype.keyPress, this);
-
-
             // TODO - zmenit interface, z ojektu klaves, na list - kazda kavesa by mohla mit vlastni callback
-            //for (let key in controllsConfig) {
-            //    this.controlls[key] = this.game.input.keyboard.addKey(controllsConfig[key]);
-            //    this.controlls[key].onUp.add(Services.Controlls.prototype.keyPress, this);
-            //}
-            
-            
+            let index: number = 0;
+            for (let command in controllsConfig) {
+               this.controlls[index] = this.game.input.keyboard.addKey(controllsConfig[command]);
+               this.controlls[index].onUp.add(Services.Controlls.prototype.keyPress, this, 1, command);
+               index++;
+            }
         }
 
-        public keyPress(e: Phaser.Key): void {
-            this.level.move('moveRight');
+        public keyPress(e: Phaser.Key, command: any): void {
+            this.level.move(command);
         }
-
-
     }
 }

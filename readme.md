@@ -1,17 +1,16 @@
-# Install Nodejs, NPM (Ubuntu)
-    
-    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+# Install 
+```bash
+# Nodejs, NPM (Ubuntu)
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
 # Gulp, Typescript
-
-    npm install -g gulp-cli
-    npm install gulp
-    npm install gulp-typescript typescript
+npm install -g gulp-cli
+npm i
 
 # Http server
-
-    npm install -g http-server
+npm install -g http-server
+```
 
 # Run
 
@@ -22,6 +21,8 @@
 ## Run http server
 
     http-server . -c-1 -o
+
+http://localhost:8080/
 
 
 ## TODO
