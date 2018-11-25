@@ -3,7 +3,6 @@
 # Install
 
 ```bash
-# Gulp, Typescript
 npm install -g gulp-cli
 npm i
 ```
@@ -19,6 +18,13 @@ gulp watch
 ## Visit page
 
 http://localhost:8080/
+
+# Credits
+
+```
+Created by: Jaroslav Zivny
+Graphics by: 1001.com
+```
 
 ## Todo
 
