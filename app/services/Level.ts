@@ -4,15 +4,19 @@ namespace Services {
         private grid: number[][];
         private player: Interface.Configuration.Position;
 
-        constructor(private game: Phaser.Game, private render: Services.Render) {
-            this.loadMultiple(Configuration.Sprites);
+        constructor(private game: Phaser.Game, private render: Services.Render, private sprite: Services.Sprite) {
+            this.sprite.loadMultiple(Configuration.Sprites);
         }
 
         public init(grid: number[][], player: Interface.Configuration.Position): void {
             this.grid = grid;
             this.player = player;
 
-            this.update([0, 0], this.player, Configuration.Role.player);
+            let vector: Interface.Configuration.Vector = {
+                'x': 0,
+                'y': 0
+            };
+            this.update(vector, this.player, Configuration.Role.player);
         }
 
         public move(action: string) {
@@ -20,84 +24,82 @@ namespace Services {
         }
 
         private moveUp(): void {
-            this.update([-1, 0],this.player, Configuration.Role.player);
+            let vector: Interface.Configuration.Vector = {
+                'x': 0,
+                'y': -1
+            };
+            this.update(vector,this.player, Configuration.Role.player);
         }
 
         private moveDown(): void {
-            this.update([1, 0], this.player, Configuration.Role.player);
-            // this.player.y = this.player.y + 1;
+            let vector: Interface.Configuration.Vector = {
+                'x': 0,
+                'y': 1
+            };
+            this.update(vector, this.player, Configuration.Role.player);
         }
 
         private moveLeft(): void {
-            this.update([0, -1], this.player, Configuration.Role.player);
+            let vector: Interface.Configuration.Vector = {
+                'x': -1,
+                'y': 0
+            };
+            this.update(vector, this.player, Configuration.Role.player);
         }
 
         private moveRight(): void {
-            this.update([0, 1], this.player, Configuration.Role.player);
+            let vector: Interface.Configuration.Vector = {
+                'x': 1,
+                'y': 0
+            };
+            this.update(vector, this.player, Configuration.Role.player);
         }
 
-        /**
-         * @todo change vector to object instead of using array indexes
-         * @todo make it more readable
-         * @param vector 
-         */
-        private update(vector: Array<number>, position: Interface.Configuration.Position, item: number): boolean {
-            const oldPosition = JSON.parse(JSON.stringify(position)); // @todo Heper function
-            position.y = position.y + vector[0];
-            position.x = position.x + vector[1];
-
-            // if (position.y < 0 || position.y > 5 || position.x < 0 || position.x > 7) {
-            //     position.y = position.y - vector[0];
-            //     position.x = position.x - vector[1];
-            //     return false;
-            // }
+         /**
+          * @param vector 
+          * @param position 
+          * @param item 
+          */
+        private update(
+            vector: Interface.Configuration.Vector, 
+            position: Interface.Configuration.Position, 
+            item: number
+        ): boolean {
+            const oldPosition: Interface.Configuration.Position = Helpers.Helper.cloneObject(position);
+            position.y = position.y + vector.y;
+            position.x = position.x + vector.x;
 
             switch (this.grid[position.y][position.x]) {
                 case Configuration.Role.wall:
-                    position.y = position.y - vector[0];
-                    position.x = position.x - vector[1];
+                    this.returnBack(vector, position);
                     return false;
                 case Configuration.Role.box:
-                    const boxPosition = JSON.parse(JSON.stringify(position)); // @todo Heper function
-                    if (!this.update(vector, boxPosition, Configuration.Role.box)) {
-                        position.y = position.y - vector[0];
-                        position.x = position.x - vector[1];
+                    if (item !== Configuration.Role.player) {
+                        this.returnBack(vector, position);
+                        return false;
                     }
-                    console.log('box'); 
+                    const boxPosition: Interface.Configuration.Position = Helpers.Helper.cloneObject(position);
+                    if (!this.update(vector, boxPosition, Configuration.Role.box)) {
+                        this.returnBack(vector, position);
+                    }
                     break;
             }
 
-            this.grid[oldPosition.y][oldPosition.x] = Configuration.Role.empty; // @todo update with original tile
+            this.grid[oldPosition.y][oldPosition.x] = Configuration.Role.empty;
             this.grid[position.y][position.x] = item;
+
             this.render.render(this.grid);
 
             return true;
         }
 
-        // @todo MOVE TO Service.sprint or assets
-        private baseUri: string = 'assets/sprites/';
-
         /**
-         * @todo Move to Service.Sprint
-         * @param assets
+         * @param vector 
+         * @param position 
          */
-        public loadMultiple(assets: string[]): void {
-            for (var gridIndex in Configuration.Sprites) {
-                this.loadOne(Configuration.Sprites[gridIndex]);
-            }
+        private returnBack(vector: Interface.Configuration.Vector, position: Interface.Configuration.Position) {
+            position.y = position.y - vector.y;
+            position.x = position.x - vector.x;
         }
-
-        /**
-         * @todo Move to Service.Sprint
-         * @param assetName
-         */
-        public loadOne(assetName: string): void {
-            this.game.load.image(
-                assetName,
-                this.baseUri + assetName + '.png'
-            );
-        }
-
-
     }
 }

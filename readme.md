@@ -20,6 +20,10 @@ gulp watch
 
 http://localhost:8080/
 
+## Todo
+
+- Complete-level recognition
+- Add more levels
 
 ## After Future
 - Travis CI
