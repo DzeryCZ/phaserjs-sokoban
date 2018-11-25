@@ -46,11 +46,11 @@ namespace Services {
             position.y = position.y + vector[0];
             position.x = position.x + vector[1];
 
-            if (position.y < 0 || position.y > 5 || position.x < 0 || position.x > 5) {
-                position.y = position.y - vector[0];
-                position.x = position.x - vector[1];
-                return false;
-            }
+            // if (position.y < 0 || position.y > 5 || position.x < 0 || position.x > 7) {
+            //     position.y = position.y - vector[0];
+            //     position.x = position.x - vector[1];
+            //     return false;
+            // }
 
             switch (this.grid[position.y][position.x]) {
                 case Configuration.Role.wall:

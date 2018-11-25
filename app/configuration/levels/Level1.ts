@@ -1,5 +1,6 @@
-namespace Configuration.Levels.Level1 {
 
+namespace Configuration.Levels.Level1 {
+    
     export const Grid: number[][] = [
         [Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty, Configuration.Role.empty],
         [Configuration.Role.empty, Configuration.Role.wall, Configuration.Role.empty, Configuration.Role.box, Configuration.Role.empty, Configuration.Role.wall],

@@ -28,7 +28,7 @@ class Game {
     }
 
     create = () => {
-        this.level.init(Configuration.Levels.Level1.Grid, Configuration.Levels.Level1.Player);
+        this.level.init(Configuration.Levels.Level2.Grid, Configuration.Levels.Level2.Player);
     }
 
 
